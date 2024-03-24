@@ -120,6 +120,8 @@ struct IntSlider: View {
 enum SwipeDirection: String {
     case right = "Right"
     case left = "Left"
+    case up = "Up"
+    case down = "Down"
 }
 
 struct CustomColor: Identifiable, Hashable {
@@ -204,7 +206,33 @@ extension CardStack {
 // MARK: Private methods
 extension CardStack {
     private func onEnded(_ gesture: _ChangedGesture<DragGesture>.Value, _ geometry: GeometryProxy) {
-        if abs(gesture.predictedEndTranslation.width) > abs(geometry.size.width) {
+        if abs(gesture.predictedEndTranslation.height) > abs(geometry.size.height) {
+            if gesture.predictedEndTranslation.height < 0 {
+                onSwipe(.up)
+            } else {
+                onSwipe(.down)
+            }
+            
+            // Remove the card
+            withAnimation(.easeInOut(duration: 0.3)) {
+                removingTopCard = true
+                offset = CGSize(
+                    width: gesture.predictedEndTranslation.width * 2.0,
+                    height: gesture.predictedEndTranslation.height * 2.0
+                )
+            }
+            
+            // Get rid of top card and show new card on bottom
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                offset = .zero
+                withAnimation(.easeInOut(duration: 3)) {
+                    shownIndex += 1
+                    removingTopCard = false
+                }
+            }
+        }
+        
+        else if abs(gesture.predictedEndTranslation.width) > abs(geometry.size.width) {
             if gesture.predictedEndTranslation.width < 0 {
                 onSwipe(.left)
             } else {

@@ -62,6 +62,7 @@ struct ArenaApp: App {
     var body: some Scene {
         WindowGroup {
             if onboardingDone {
+                // Attach the main view of the system
                 ArenaView()
                     .preferredColorScheme(selectedAppearance == 0 ? nil : selectedAppearance == 1 ? .light : .dark)
                     .sheet(isPresented: $connectSheetOpen) {
@@ -73,6 +74,10 @@ struct ArenaApp: App {
                             .presentationCornerRadius(32)
                             .contentMargins(16)
                     }
+                    // make a web browser view available for user at a specific URL
+                    // as needed.
+                
+                    // How are these views all invoked? why do they need ot be attached like this?
                     .safariView(isPresented: $safariViewOpen) {
                         SafariView(
                             url: URL(string: safariViewURL)!,
@@ -96,6 +101,7 @@ struct ArenaApp: App {
                         }
                     }
             } else {
+                // If we don't have auth, send onboarding view.
                 OnboardingView()
                     .preferredColorScheme(selectedAppearance == 0 ? nil : selectedAppearance == 1 ? .light : .dark)
                     .safariView(isPresented: $safariViewOpen) {
@@ -138,6 +144,7 @@ extension UIDevice {
     }
 }
 
+// Parse an internal? URL scheme to a specific are.na block ID
 private func parseDeeplink(_ url: URL) -> Int {
     guard url.scheme == "are-na" else {
         print("Invalid url scheme")

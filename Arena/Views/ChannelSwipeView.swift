@@ -5,4 +5,108 @@
 //  Created by Jake Chvatal on 2024-03-23.
 //
 
-import Foundation
+import SwiftUI
+import Defaults
+import Combine
+
+struct ChannelSwipeView: View {
+    @StateObject private var pinnedChannelsData: PinnedChannelsData
+    @Default(.pinnedChannels) var pinnedChannels
+    @Default(.pinnedChannelsChanged) var pinnedChannelsChanged
+    @Default(.widgetBlockId) var widgetBlockId
+    @Default(.widgetTapped) var widgetTapped
+    
+    init() {
+        self._pinnedChannelsData = StateObject(wrappedValue: PinnedChannelsData(pinnedChannels: Defaults[.pinnedChannels]))
+    }
+    
+    var body: some View {
+        NavigationStack {
+            HStack(alignment: .center) {
+                if pinnedChannels.isEmpty {
+                    VStack(alignment: .center) {
+                        Button {} label: {
+                            Label("hey", systemImage: "arrow.right")
+                        }
+                        InitialPinnedChannels()
+                    }
+                } else if pinnedChannelsData.isLoading {
+                    CircleLoadingSpinner()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                } else {
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            ForEach(pinnedChannelsData.channels ?? [], id: \.id) { channel in
+                                ChannelCard(channel: channel, showPin: false)
+                                    .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 32))
+                                    .contextMenu {
+                                        Button {
+                                            Defaults[.connectSheetOpen] = true
+                                            Defaults[.connectItemId] = channel.id
+                                            Defaults[.connectItemType] = "Channel"
+                                        } label: {
+                                            Label("Connect", systemImage: "arrow.right")
+                                        }
+                                        
+                                        Button {
+                                            removePinnedChannel(channel.id)
+                                            displayToast("Bookmark removed!")
+                                        } label: {
+                                            Label(pinnedChannels.contains(channel.id) ? "Remove bookmark" : "Bookmark", systemImage: pinnedChannels.contains(channel.id) ? "bookmark.fill" : "bookmark")
+                                        }
+                                    }
+                            }
+                        }
+                        
+                    }
+                    .padding(.bottom, 4)
+                    .refreshable {
+                        do { try await Task.sleep(nanoseconds: 500_000_000) } catch {}
+                        pinnedChannelsData.refresh(pinnedChannels: Defaults[.pinnedChannels])
+                    }
+                }
+            }
+            .onAppear {
+                if pinnedChannelsChanged {
+                    pinnedChannelsData.fetchChannels(pinnedChannels: Defaults[.pinnedChannels], refresh: true)
+                    Defaults[.pinnedChannelsChanged] = false
+                }
+            }
+            .navigationDestination(isPresented: $widgetTapped) {
+                HistorySingleBlockView(blockId: widgetBlockId)
+            }
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Text("Bookmarks")
+                        .foregroundStyle(Color("text-primary"))
+                        .font(.system(size: 20))
+                        .fontDesign(.rounded)
+                        .fontWeight(.semibold)
+                }
+            }
+            .toolbarBackground(Color("background"), for: .navigationBar)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .background(Color("background"))
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+        .background(Color("background"))
+        .contentMargins(.leading, 0, for: .scrollIndicators)
+        .contentMargins(16)
+    }
+    
+    private func removePinnedChannel(_ channelId: Int) {
+        // If the channel is pinned, remove it from the view without refetching data
+        if let index = pinnedChannelsData.channels?.firstIndex(where: { $0.id == channelId }) {
+            var updatedChannels = pinnedChannelsData.channels ?? []
+            updatedChannels.remove(at: index)
+            pinnedChannelsData.channels = updatedChannels
+        }
+        
+        pinnedChannels.removeAll { $0 == channelId }
+    }
+}
+
+#Preview {
+    ChannelSwipeView()
+}

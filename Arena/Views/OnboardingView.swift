@@ -8,6 +8,7 @@
 import SwiftUI
 import Defaults
 
+// Root state for the onboarding view.
 struct OnboardingView: View {
     @State private var accessToken: String = ""
     @State private var username: String = ""
@@ -23,7 +24,7 @@ struct OnboardingView: View {
         NavigationStack {
             VStack(alignment: .center) {
                 Spacer()
-                
+    
                 VStack(spacing: 40) {
                     Image(uiImage: UIImage(named: "AppIcon-Preview")!)
                         .resizable()
@@ -58,7 +59,7 @@ struct OnboardingView: View {
                 }
                 
                 Spacer()
-                
+
                 NavigationLink(
                     destination: VerificationView(
                         accessToken: $accessToken,
@@ -155,6 +156,7 @@ struct OnboardingView: View {
     }
 }
 
+// After the user has logged in, verify that their information is correct.
 struct VerificationView: View {
     @Binding var accessToken: String
     @Binding var username: String
@@ -228,6 +230,7 @@ struct VerificationView: View {
     }
 }
 
+// Provide a disclaimer after the user logs in -> warning them what this app is missing.
 struct DisclaimerView: View {
     @Binding var accessToken: String
     @Binding var username: String
@@ -245,8 +248,8 @@ struct DisclaimerView: View {
                         .fontWeight(.medium)
                         .fontDesign(.rounded)
                     
-                    VStack(spacing: 12 ) {
-                        HStack(alignment: .center, spacing: 16) {
+                    VStack(spacing: 10 ) {
+                        HStack(alignment: .center, spacing: 10) {
                             Image(systemName: "camera.macro.circle.fill")
                                 .imageScale(.medium)
                                 .foregroundStyle(Color("text-secondary"))

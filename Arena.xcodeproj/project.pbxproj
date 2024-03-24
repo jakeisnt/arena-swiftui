@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		234A14C82BAF8D340091E2E5 /* ChannelSwipeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234A14C72BAF8D340091E2E5 /* ChannelSwipeView.swift */; };
 		8F1037412B2022B4007B680C /* ConnectToChannelData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1037402B2022B4007B680C /* ConnectToChannelData.swift */; };
 		8F1037432B20303F007B680C /* SearchBarStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1037422B20303F007B680C /* SearchBarStyles.swift */; };
 		8F1037452B2030AD007B680C /* SmallChannelPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1037442B2030AD007B680C /* SmallChannelPreview.swift */; };
@@ -147,6 +148,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		234A14C72BAF8D340091E2E5 /* ChannelSwipeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSwipeView.swift; sourceTree = "<group>"; };
 		8F1037402B2022B4007B680C /* ConnectToChannelData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectToChannelData.swift; sourceTree = "<group>"; };
 		8F1037422B20303F007B680C /* SearchBarStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarStyles.swift; sourceTree = "<group>"; };
 		8F1037442B2030AD007B680C /* SmallChannelPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallChannelPreview.swift; sourceTree = "<group>"; };
@@ -523,6 +525,7 @@
 				8F785AD72B289FB4005101E6 /* ConnectNewView.swift */,
 				8F785ADD2B28C94C005101E6 /* ConnectURLView.swift */,
 				8F17E5B12B33F47C00549AB9 /* RabbitHoleView.swift */,
+				234A14C72BAF8D340091E2E5 /* ChannelSwipeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -768,6 +771,7 @@
 				8F17E5AE2B32C61600549AB9 /* ChannelConnectionsData.swift in Sources */,
 				8F6B06342AE5B87400EEDE9C /* ChannelCard.swift in Sources */,
 				8F7A03E72AE5EC9F005C4096 /* ProfileView.swift in Sources */,
+				234A14C82BAF8D340091E2E5 /* ChannelSwipeView.swift in Sources */,
 				8FB168B52ADA53DF00426906 /* ChannelData.swift in Sources */,
 				8F840B8A2B066D2800B17F31 /* ChangeAppIconView.swift in Sources */,
 				8F8542782AFF15C20078E82C /* PinnedChannelsData.swift in Sources */,

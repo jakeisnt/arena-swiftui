@@ -21,6 +21,8 @@ struct ChannelSwipeView: View {
     ]
     @State private var visibleCardCount = 4
     @State private var direction: SwipeDirection?
+    @State private var isLoading: boolean
+    
     
     var body: some View {
         GeometryReader { geometry in
@@ -89,6 +91,68 @@ struct ChannelSwipeView: View {
             }
         }
         .padding(.horizontal)
+    }
+    
+    // MARK: - Fetch search results
+    final func fetchSearchResults() {
+        guard !isLoading else {
+            return
+        }
+        
+        self.isLoading = true
+        let errorMessage = nil
+        
+        let option: String = "blocks"
+        
+        let searchTerm = "hi"
+        let currentPage = 0
+        
+        guard let url = URL(string: "https://api.are.na/v2/search/\(option)?q=\(searchTerm)&page=\(currentPage)&per=20") else {
+            self.isLoading = false
+            errorMessage = "Invalid URL"
+            return
+        }
+                
+        // Create a URLRequest and set the "Authorization" header with your bearer token
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(Defaults[.accessToken])", forHTTPHeaderField: "Authorization")
+        
+        let task = URLSession.shared.dataTask(with: request) { [unowned self] (data, response, error) in
+            if error != nil {
+                errorMessage = "Error retrieving data."
+                return
+            }
+            
+            if let data = data {
+                let decoder = JSONDecoder()
+                do {
+                    // Attempt to decode the data
+                    let searchResults = try decoder.decode(ArenaSearchResults.self, from: data)
+                    DispatchQueue.main.async {
+                        if self.searchResults != nil {
+                            self.searchResults?.channels.append(contentsOf: searchResults.channels)
+                            self.searchResults?.blocks.append(contentsOf: searchResults.blocks)
+                            self.searchResults?.users.append(contentsOf: searchResults.users)
+                        } else {
+                            self.searchResults = searchResults
+                        }
+                        self.totalPages = searchResults.totalPages
+                        self.currentPage += 1
+                    }
+                } catch let decodingError {
+                    // Print the decoding error for debugging
+                    print("Decoding Error: \(decodingError)")
+                    errorMessage = "Error decoding data: \(decodingError.localizedDescription)"
+                    return
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+        }
+        
+        task.resume()
     }
 }
 
